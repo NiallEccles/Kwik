@@ -6,7 +6,7 @@ var currentQuestionIndex = 0;
 var endGame = false;
 var questionsArray = [];
 var score = 0;
-var numQuestionsAnswered = 0;
+var numQuestionsAnswered = 1;
 
 axios.get("https://opentdb.com/api.php?amount=10").then(res => {
   questions = res.data.results;
@@ -78,21 +78,22 @@ function wrongAnswer(){
 }
 
 function handleAnswer(answer){
+    numQuestionsAnswered++;
     if(answer){
-        createQuestions();
-        score++;
-        numQuestionsAnswered++;
         console.log('number of questions answered', numQuestionsAnswered);
-        if((numQuestionsAnswered) > questions.length){
+        if(numQuestionsAnswered >= questions.length){
           endGame = true;
           let content = document.querySelector("#questions");
           content.innerHTML = '';
           document.getElementById('gameOver').innerHTML = 'Game Finished';
         }
+        else {
+            createQuestions();
+            score++;
+        }
     } else {
-        numQuestionsAnswered++;
         console.log('number of questions answered', numQuestionsAnswered);
-        if((numQuestionsAnswered) > questions.length){
+        if(numQuestionsAnswered >= questions.length){
             endGame = true;
             let content = document.querySelector("#questions");
             content.innerHTML = '';
