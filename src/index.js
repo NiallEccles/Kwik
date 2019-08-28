@@ -23,26 +23,29 @@ function createQuestions() {
   content.innerHTML = `
         <h3>${questions[currentQuestionIndex].category}</h3>
         <h1>${questions[currentQuestionIndex].question}</h1>
-        ${createAnswers(
-          questions[currentQuestionIndex].correct_answer,
-          questions[currentQuestionIndex].incorrect_answers
-        )}
     `;
+
+  document.querySelector('#answers').innerHTML = `
+    ${createAnswers(
+    questions[currentQuestionIndex].correct_answer,
+    questions[currentQuestionIndex].incorrect_answers
+  )}`
+
   document.getElementById("correct").addEventListener("click", () => {
-      handleAnswer(true);
+    handleAnswer(true);
   });
   const wrongAnswers = document.querySelectorAll('.wrong');
   for (let k = 0; k < wrongAnswers.length; k++) {
-      wrongAnswers[k].addEventListener('click', ()=>{
-        handleAnswer(false);
-      })
+    wrongAnswers[k].addEventListener('click', () => {
+      handleAnswer(false);
+    })
   }
 }
 
 function createAnswers(correct, wrong) {
-  questionsArray.push(`<button id="correct">${correct}</button>`);
+  questionsArray.push(`<button class="heading" id="correct">${correct}</button>`);
   for (let i = 0; i < wrong.length; i++) {
-    questionsArray.push(`<button class="wrong">${wrong[i]}</button>`);
+    questionsArray.push(`<button class="wrong heading">${wrong[i]}</button>`);
   }
   shuffle(questionsArray);
   var myDivs = "";
@@ -73,35 +76,35 @@ function shuffle(array) {
   questionsArray = array;
 }
 
-function wrongAnswer(){
-    console.log('Wrong Answer');
+function wrongAnswer() {
+  console.log('Wrong Answer');
 }
 
-function handleAnswer(answer){
-    numQuestionsAnswered++;
-    if(answer){
-        console.log('number of questions answered', numQuestionsAnswered);
-        if(numQuestionsAnswered >= questions.length){
-          endGame = true;
-          let content = document.querySelector("#questions");
-          content.innerHTML = '';
-          document.getElementById('gameOver').innerHTML = 'Game Finished';
-        }
-        else {
-            createQuestions();
-            score++;
-        }
-    } else {
-        console.log('number of questions answered', numQuestionsAnswered);
-        if(numQuestionsAnswered >= questions.length){
-            endGame = true;
-            let content = document.querySelector("#questions");
-            content.innerHTML = '';
-            document.getElementById('gameOver').innerHTML = 'Game Finished';
-        } else {
-            createQuestions();
-            wrongAnswer();
-        }
+function handleAnswer(answer) {
+  numQuestionsAnswered++;
+  if (answer) {
+    console.log('number of questions answered', numQuestionsAnswered);
+    if (numQuestionsAnswered >= questions.length) {
+      endGame = true;
+      let content = document.querySelector("#questions");
+      content.innerHTML = '';
+      document.getElementById('gameOver').innerHTML = 'Game Finished';
     }
-    console.log('questions length', questions.length);
+    else {
+      createQuestions();
+      score++;
+    }
+  } else {
+    console.log('number of questions answered', numQuestionsAnswered);
+    if (numQuestionsAnswered >= questions.length) {
+      endGame = true;
+      let content = document.querySelector("#questions");
+      content.innerHTML = '';
+      document.getElementById('gameOver').innerHTML = 'Game Finished';
+    } else {
+      createQuestions();
+      wrongAnswer();
+    }
+  }
+  console.log('questions length', questions.length);
 }
