@@ -1,5 +1,6 @@
 import style from "./main.css";
 import axios from "axios";
+var ProgressBar = require('progressbar.js');
 
 var questions;
 var currentQuestionIndex = 0;
@@ -7,11 +8,19 @@ var endGame = false;
 var questionsArray = [];
 var score = 0;
 var numQuestionsAnswered = 1;
+var timer;
+var count = 10;
+var difficulty = [
+  'easy',
+  'normal'
+];
+var currentDifficulty = difficulty[0];
 
-axios.get("https://opentdb.com/api.php?amount=10").then(res => {
-  questions = res.data.results;
-  createQuestions();
-});
+document.getElementById('startGame').addEventListener('click', ()=>{
+  document.getElementById('startGame').style.display = 'none';
+  document.getElementById('splash').style.display = 'none';
+  startGame();
+})
 
 function createQuestions() {
   currentQuestionIndex < questions.length
@@ -92,17 +101,27 @@ function shuffle(array) {
   questionsArray = array;
 }
 
-function wrongAnswer() {
-  console.log("Wrong Answer");
+function correctAnswer(){
+  removeCountdown();
+  resetTimer();
+  startTimer();
 }
+
+function wrongAnswer() {
+  removeCountdown();
+  resetTimer();
+  startTimer();
+};
 
 function handleAnswer(answer) {
   numQuestionsAnswered++;
+  document.getElementById('q').innerHTML = numQuestionsAnswered;
   if (answer) {
     if (numQuestionsAnswered >= questions.length) {
       handleEndGame();
     } else {
       createQuestions();
+      correctAnswer();
       score++;
     }
   } else {
@@ -127,7 +146,8 @@ function handleEndGame() {
   `;
   document.getElementById('newGame').addEventListener('click',()=>{
       newGame();
-  })
+  });
+  clearInterval(timer);
 }
 
 function newGame(){
@@ -142,4 +162,50 @@ function newGame(){
     numQuestionsAnswered = 1;
     document.getElementById("gameOver").innerHTML = '';
     document.getElementById('container').style.display = 'block';
+    resetTimer();
+    startTimer();
+}
+
+function startGame(){
+    axios.get("https://opentdb.com/api.php?amount=10").then(res => {
+    questions = res.data.results;
+        createQuestions();
+    });
+    document.getElementById('q').innerHTML = numQuestionsAnswered;
+    startTimer();
+}
+
+function startTimer(){
+  var bar = '';
+  bar = new ProgressBar.Circle('#timer', {
+    strokeWidth: 6,
+    easing: 'easeInOut',
+    duration: 1,
+    color: '#4f3dff',
+    trailColor: '#eee',
+    trailWidth: 1,
+    svgStyle: null
+  });
+
+
+  timer = setInterval(()=>{
+    count--;
+    console.log(count);
+    bar.animate(count/10);
+    document.getElementById('time').innerHTML = count;
+    if(count === 0){
+      handleAnswer(false);
+    }
+  },1000)
+}
+
+function resetTimer(){
+  count = 10;
+  clearInterval(timer);
+  console.info('reset timer');
+}
+
+function removeCountdown(){
+  let svgTimer = document.querySelector('#timer');
+  svgTimer.removeChild(svgTimer.childNodes[0]);
 }
