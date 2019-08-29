@@ -18,32 +18,48 @@ function createQuestions() {
     ? currentQuestionIndex++
     : (endGame = true);
   let content = document.querySelector("#questions");
-  content.innerHTML = '';
+  content.innerHTML = "";
+
+  if (questions[currentQuestionIndex].difficulty === "easy") {
+    document.querySelector("body").classList.remove("medium");
+    document.querySelector("body").classList.remove("hard");
+    document.querySelector("body").classList.add("easy");
+  } else if (questions[currentQuestionIndex].difficulty === "medium") {
+    document.querySelector("body").classList.remove("easy");
+    document.querySelector("body").classList.remove("hard");
+    document.querySelector("body").classList.add("medium");
+  } else if (questions[currentQuestionIndex].difficulty === "hard") {
+    document.querySelector("body").classList.remove("easy");
+    document.querySelector("body").classList.remove("medium");
+    document.querySelector("body").classList.add("hard");
+  }
 
   content.innerHTML = `
         <h3>${questions[currentQuestionIndex].category}</h3>
-        <h1>${questions[currentQuestionIndex].question}</h1>
+        <h2>${questions[currentQuestionIndex].question}</h2>
     `;
 
-  document.querySelector('#answers').innerHTML = `
+  document.querySelector("#answers").innerHTML = `
     ${createAnswers(
-    questions[currentQuestionIndex].correct_answer,
-    questions[currentQuestionIndex].incorrect_answers
-  )}`
+      questions[currentQuestionIndex].correct_answer,
+      questions[currentQuestionIndex].incorrect_answers
+    )}`;
 
   document.getElementById("correct").addEventListener("click", () => {
     handleAnswer(true);
   });
-  const wrongAnswers = document.querySelectorAll('.wrong');
+  const wrongAnswers = document.querySelectorAll(".wrong");
   for (let k = 0; k < wrongAnswers.length; k++) {
-    wrongAnswers[k].addEventListener('click', () => {
+    wrongAnswers[k].addEventListener("click", () => {
       handleAnswer(false);
-    })
+    });
   }
 }
 
 function createAnswers(correct, wrong) {
-  questionsArray.push(`<button class="heading" id="correct">${correct}</button>`);
+  questionsArray.push(
+    `<button class="heading" id="correct">${correct}</button>`
+  );
   for (let i = 0; i < wrong.length; i++) {
     questionsArray.push(`<button class="wrong heading">${wrong[i]}</button>`);
   }
@@ -77,34 +93,53 @@ function shuffle(array) {
 }
 
 function wrongAnswer() {
-  console.log('Wrong Answer');
+  console.log("Wrong Answer");
 }
 
 function handleAnswer(answer) {
   numQuestionsAnswered++;
   if (answer) {
-    console.log('number of questions answered', numQuestionsAnswered);
     if (numQuestionsAnswered >= questions.length) {
-      endGame = true;
-      let content = document.querySelector("#questions");
-      content.innerHTML = '';
-      document.getElementById('gameOver').innerHTML = 'Game Finished';
-    }
-    else {
+      handleEndGame();
+    } else {
       createQuestions();
       score++;
     }
   } else {
-    console.log('number of questions answered', numQuestionsAnswered);
     if (numQuestionsAnswered >= questions.length) {
-      endGame = true;
-      let content = document.querySelector("#questions");
-      content.innerHTML = '';
-      document.getElementById('gameOver').innerHTML = 'Game Finished';
+        handleEndGame();
     } else {
       createQuestions();
       wrongAnswer();
     }
   }
-  console.log('questions length', questions.length);
+}
+
+function handleEndGame() {
+  endGame = true;
+  document.getElementById('container').style.display = 'none';
+  document.querySelector("#questions").innerHTML = "";
+  document.querySelector("#answers").innerHTML = "";
+  document.getElementById("gameOver").innerHTML = `
+  <h2>Game Finished!</h2>
+  <h2>You scored: ${score}</h2>
+  <button class="heading" id="newGame">New Game</button>
+  `;
+  document.getElementById('newGame').addEventListener('click',()=>{
+      newGame();
+  })
+}
+
+function newGame(){
+    axios.get("https://opentdb.com/api.php?amount=10").then(res => {
+        questions = res.data.results;
+        createQuestions();
+    });
+    currentQuestionIndex = 0;
+    endGame = false;
+    questionsArray = [];
+    score = 0;
+    numQuestionsAnswered = 1;
+    document.getElementById("gameOver").innerHTML = '';
+    document.getElementById('container').style.display = 'block';
 }
