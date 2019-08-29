@@ -136,6 +136,22 @@ svg{
     left: 2em;
 }
 
+.wrong-answer{
+    background: #f3aaaa;
+    border: 2px solid #f3aaaa;
+}
+
+.right-answer{
+    background: #bbf3aa!important;
+    border: 2px solid #bbf3aa!important;
+}
+
+#currentDifficulty{
+    font-family: 'Fredoka One', cursive;
+    color: #4f3dff;
+    margin-bottom: 0;
+}
+
 @media only screen and (max-width: 600px) {
     #container{
         max-width: 90%;

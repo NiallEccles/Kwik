@@ -12,15 +12,24 @@ var timer;
 var count = 10;
 var difficulty = [
   'easy',
-  'normal'
+  'medium',
+  'hard',
+  'suprise me'
 ];
-var currentDifficulty = difficulty[0];
+var currentDifficulty = difficulty[difficulty.length-1];
 
 document.getElementById('startGame').addEventListener('click', ()=>{
   document.getElementById('startGame').style.display = 'none';
   document.getElementById('splash').style.display = 'none';
   startGame();
-})
+});
+
+//document.getElementById('currentDifficulty').innerHTML = `Current Difficulty: ${currentDifficulty}`
+
+// document.getElementById('difficulty').addEventListener('click',()=>{
+//   difficulty.indexOf(currentDifficulty)+1 > difficulty.length -1 ? currentDifficulty = difficulty[0] : currentDifficulty = difficulty[difficulty.indexOf(currentDifficulty)+1];
+//   document.getElementById('currentDifficulty').innerHTML = `Current Difficulty: ${currentDifficulty}`
+// })
 
 function createQuestions() {
   currentQuestionIndex < questions.length
@@ -116,22 +125,26 @@ function wrongAnswer() {
 function handleAnswer(answer) {
   numQuestionsAnswered++;
   document.getElementById('q').innerHTML = numQuestionsAnswered;
-  if (answer) {
-    if (numQuestionsAnswered >= questions.length) {
-      handleEndGame();
-    } else {
-      createQuestions();
-      correctAnswer();
-      score++;
-    }
-  } else {
-    if (numQuestionsAnswered >= questions.length) {
+  document.querySelector('#correct').classList.add('right-answer');
+  clearInterval(timer);
+  setTimeout(()=>{
+    if (answer) {
+      if (numQuestionsAnswered >= questions.length) {
         handleEndGame();
+      } else {
+        createQuestions();
+        correctAnswer();
+        score++;
+      }
     } else {
-      createQuestions();
-      wrongAnswer();
+      if (numQuestionsAnswered >= questions.length) {
+          handleEndGame();
+      } else {
+        createQuestions();
+        wrongAnswer();
+      }
     }
-  }
+  },3000)
 }
 
 function handleEndGame() {
@@ -194,6 +207,7 @@ function startTimer(){
     bar.animate(count/10);
     document.getElementById('time').innerHTML = count;
     if(count === 0){
+      document.querySelector('#correct').classList.add('right-answer');
       handleAnswer(false);
     }
   },1000)
