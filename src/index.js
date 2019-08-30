@@ -2,6 +2,36 @@ import style from "./main.css";
 import axios from "axios";
 var ProgressBar = require('progressbar.js');
 
+// var Question = function(){
+
+//   var _question = {
+//     el: document.getElementById('startGame'),
+//     question: '',
+//     anwers: []
+//   };
+
+//   var init = function(){
+    
+//     return _question;
+//   };
+
+//   _question.update = function(question, answers){
+//     _question.question = question;
+//     _question.answers = answers;
+
+//     _question.render();
+//   };
+
+//   _question.render = function(){
+//     _question.el.innerHTML = "<div>"+_question.question+"</div>";
+//   };
+
+//   return _init();
+// };
+
+// var firstQuestion = new Question();
+
+
 var questions;
 var currentQuestionIndex = 0;
 var endGame = false;
@@ -114,6 +144,9 @@ function correctAnswer(){
   removeCountdown();
   resetTimer();
   startTimer();
+  score++;
+  console.log(score);
+  
 }
 
 function wrongAnswer() {
@@ -130,11 +163,12 @@ function handleAnswer(answer) {
   setTimeout(()=>{
     if (answer) {
       if (numQuestionsAnswered >= questions.length) {
+        correctAnswer();
+        score++;
         handleEndGame();
       } else {
         createQuestions();
         correctAnswer();
-        score++;
       }
     } else {
       if (numQuestionsAnswered >= questions.length) {
